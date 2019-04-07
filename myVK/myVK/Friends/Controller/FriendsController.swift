@@ -102,7 +102,6 @@ extension FriendsController: UITableViewDataSource {
         
         let key = sectionName[section]
         guard let returnData = friendsDictionary[key] else { return 0 }
-        print(returnData.count)
         return returnData.count
     }
     
