@@ -19,6 +19,8 @@ class FriendsController: UIViewController {
     let searchController = UISearchController(searchResultsController: nil)
     let cellIdentifire = "FriendsViewCell"
     let segueIdentifire = "FotoAlbomSegue"
+    var sectionName = [String]()
+    var friendsDictionary = [String: [FriendsModel]]()
     
 // FriendsController Methods
     
@@ -26,6 +28,21 @@ class FriendsController: UIViewController {
         super.viewDidLoad()
         
         setupSearchController()
+        sortFriendsAlphabetically()
+    }
+    
+    private func sortFriendsAlphabetically() {
+        
+        for name in FriendsModel.userFriendsArray {
+            let key = name.friendStartChar
+            if friendsDictionary[key] == nil {
+                sectionName.append(key)
+                friendsDictionary[key] = [name]
+            } else {
+                friendsDictionary[key]?.append(name)
+            }
+        }
+        sectionName.sort()
     }
     
 //TODO: - SearchController Methods
@@ -60,9 +77,11 @@ class FriendsController: UIViewController {
         guard let indexPath = tableView.indexPathForSelectedRow else { return }
         
         let friendAllFotoController = segue.destination as! FriendAllFotoController
+        let key = sectionName[indexPath.section]
+        guard let friends = friendsDictionary[key] else { return }
         let friendData = isFiltered() ?
             FriendsModel.filterFriendsArray[indexPath.row] :
-            FriendsModel.userFriendsArray[indexPath.row]
+            friends[indexPath.row]
         
         friendAllFotoController.friendData = friendData
     }
@@ -73,26 +92,43 @@ class FriendsController: UIViewController {
 
 extension FriendsController: UITableViewDataSource {
     
+    func numberOfSections(in tableView: UITableView) -> Int {
+        guard !isFiltered() else { return 1 }
+        return sectionName.count
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard isFiltered() else { return FriendsModel.userFriendsArray.count }
-        return FriendsModel.filterFriendsArray.count
+        guard !isFiltered() else { return FriendsModel.filterFriendsArray.count }
+        
+        let key = sectionName[section]
+        guard let returnData = friendsDictionary[key] else { return 0 }
+        print(returnData.count)
+        return returnData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifire, for: indexPath) as! FriendsViewCell
         
+        let key = sectionName[indexPath.section]
+        guard let friend = friendsDictionary[key] else { return cell }
+        
         let avatar = isFiltered() ?
             UIImage(named: FriendsModel.filterFriendsArray[indexPath.row].fotoFriend) :
-            UIImage(named: FriendsModel.userFriendsArray[indexPath.row].fotoFriend)
+            UIImage(named: friend[indexPath.row].fotoFriend)
         let name = isFiltered() ?
             FriendsModel.filterFriendsArray[indexPath.row].nameFriend :
-            FriendsModel.userFriendsArray[indexPath.row].nameFriend
+            friend[indexPath.row].nameFriend
         
         cell.avatarView.image = avatar
         cell.nameFriendLabel.text = name
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        guard !isFiltered() else { return "Найденно:"}
+        return sectionName[section]
     }
     
 }
