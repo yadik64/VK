@@ -40,6 +40,19 @@ struct FriendsModel {
         }
     }
     
+    static var sectionName: [String] {
+        get {
+            var array = [String]()
+            for char in FriendsModel.userFriendsArray {
+                if !array.contains(char.friendStartChar) {
+                    array.append(char.friendStartChar)
+                }
+            }
+            array.sort()
+            return array
+        }
+    }
+    
     static var filterFriendsArray = [FriendsModel]()
     
     static var userFriendsArray: [FriendsModel] = [

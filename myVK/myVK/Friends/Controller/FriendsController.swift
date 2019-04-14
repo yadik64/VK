@@ -13,7 +13,8 @@ class FriendsController: UIViewController {
 //TODO: - Outlets
     
     @IBOutlet weak var tableView: UITableView!
-
+    @IBOutlet weak var charControl: CharControl!
+    
 //TODO: - Propertis
     
     let searchController = UISearchController(searchResultsController: nil)
@@ -29,6 +30,13 @@ class FriendsController: UIViewController {
         
         setupSearchController()
         sortFriendsAlphabetically()
+    }
+    
+    @IBAction func pressCharControl(_ sender: CharControl) {
+        guard let char = sender.selectedChar else { return }
+        guard let sectionIndex = FriendsModel.sectionName.firstIndex(of: char.uppercased()) else { return }
+        let indexPath = IndexPath(row: 0, section: sectionIndex)
+        tableView.scrollToRow(at: indexPath, at: .top, animated: true)
     }
     
     private func sortFriendsAlphabetically() {
@@ -66,6 +74,7 @@ class FriendsController: UIViewController {
     private func filterContentForSearchText(searchText: String) {
         FriendsModel.filterFriendsArray = FriendsModel.userFriendsArray.filter{ $0.nameFriend.lowercased().contains(searchText.lowercased())}
         
+        charControl.isHidden = true
         tableView.reloadData()
     }
     
