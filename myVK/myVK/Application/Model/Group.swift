@@ -12,7 +12,6 @@ struct Group: Hashable {
     
     var nameGroup : String
     var nameIcon : String
-    
     static var userGroupsArray = [Group]()
     static var allGroupsArray = [
         Group(nameGroup: "iOS Developers", nameIcon: "appleIcon"),

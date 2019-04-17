@@ -12,8 +12,8 @@ protocol AllGroupsControllerDelegate {
     func addToTable(group: Group)
 }
 
-class AllGroupsController: UIViewController {
-    
+class AllGroupsController: UIViewController, GroupPageControllerDelegate {
+
     var delegate: AllGroupsControllerDelegate!
     
     var viewGroupArray: [Group] {
@@ -31,10 +31,17 @@ class AllGroupsController: UIViewController {
         guard segue.identifier == "ViewPageGroupSegue" else { return }
         
         let destinationVC = segue.destination as! GroupPageController
-        
+        destinationVC.delegate = self
         guard let indexPath = tableView.indexPathForSelectedRow else { return }
         destinationVC.group = viewGroupArray[indexPath.row]
     }
+    
+    func addGroup(group: Group) {
+        Group.userGroupsArray.append(group)
+        self.tableView.reloadData()
+    }
+    
+    func deleteGroup(group: Group) {}
     
 }
 
