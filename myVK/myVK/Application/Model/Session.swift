@@ -11,10 +11,9 @@ import Foundation
 class Session {
     
     static var instance = Session()
-    
-    private init(){}
-    
     var token: String?
     var userID : Int?
+    
+    private init(){}
     
 }
