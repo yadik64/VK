@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol GroupPageControllerDelegate {
+protocol GroupPageControllerDelegate: AnyObject {
     func deleteGroup(group: Group)
     func addGroup(group: Group)
 }
@@ -19,7 +19,7 @@ class GroupPageController: UIViewController {
     @IBOutlet weak var nameGroup: UILabel!
     @IBOutlet weak var joinedButton: UIButton!
     
-    var delegate: GroupPageControllerDelegate?
+    weak var delegate: GroupPageControllerDelegate?
     var group: Group? {
         willSet {
             if Group.userGroupsArray.contains(newValue!) {
